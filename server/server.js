@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import connectDB from "./configs/db.js";
+import {inngest, functions} from './inngest/index.js'
 
 const app=express()
 
@@ -15,6 +16,8 @@ await connectDB()
 app.get('/',(req,res)=>{
     res.send("Server is running")
 })
+
+app.use('/api/inngest', serve({ client: inngest, functions }));
 
 app.listen(PORT,()=>{
     console.log(`Server is running on http:localhost:${PORT}`)
