@@ -9,6 +9,8 @@ export const getUserData=async (req,res) => {
     try {
         const {userId}=req.auth()
         const user=await User.findById(userId)
+//        console.log("AUTH:", req.auth())
+// console.log("USER ID:", userId)
         if(!user){
             return res.json({success:false,message:"User not found"})
         }
@@ -24,12 +26,12 @@ export const getUserData=async (req,res) => {
 export const updateUserData=async (req,res) => {
     try {
         const {userId}=req.auth()
-        const {username,bio,location,full_name}=req.body
+        let {username,bio,location,full_name}=req.body
         const tempUser=await User.findById(userId)
         
         !username && (username=tempUser.username)
         if(tempUser.username!==username){
-            const user=User.findOne({username})
+            const user=await User.findOne({username})
             if(user){
                 //we will not update username if it is allready taken
                 username=tempUser.username
@@ -88,17 +90,10 @@ export const updateUserData=async (req,res) => {
         const user=await User.findByIdAndUpdate(userId,updatedData,{new:true})
 
         res.json({success:true,user,message:"Profile updated successfully"})
-
-
-
-
-        
-
     } catch (error) {
         console.log(error)
          res.json({success:false,message:error.message})
-    }
-    
+    } 
 }
 
 //Find user using username,email,location,name
@@ -170,12 +165,6 @@ export const unfollowUser=async (req,res) => {
         await toUser.save();
 
         res.json({success:true,message:'You are no longer following this user'})
-
-
-
-      
-
-      
     } catch (error) {
         console.log(error)
          res.json({success:false,message:error.message})
